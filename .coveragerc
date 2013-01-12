@@ -1,0 +1,12 @@
+[run]
+branch = True
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Ignore anything raising an exception.
+    raise .*
+    # Lots of abstract methods are implemented as 'pass'.
+    pass
+
+include = imusim*
