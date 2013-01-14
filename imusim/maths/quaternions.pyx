@@ -136,6 +136,14 @@ def QuaternionFromEuler(angles,order='zyx',inDegrees=True):
     q.setFromEuler(angles,order,inDegrees)
     return q
 
+def QuaternionFromMatrix(m):
+    """
+    Create a quaternion to be eqivalent to a given 3x3 rotation matrix.
+    """
+    q = Quaternion()
+    q.setFromMatrix(m)
+    return q
+
 def QuaternionFromVectors(x,y,z):
     """
     Create a quaternion that acts as a rotation taking the e1,e2,e3 basis
@@ -492,7 +500,7 @@ cdef class Quaternion:
         Set this quaternion so that it acts as a rotation taking the e1,e2,e3
         basis vectors to x,y,z.
         """
-        self.setFromMatrix(np.hstack((x,y,z)).T)
+        self.setFromMatrix(np.vstack((x,y,z)).reshape(3,3))
 
     def setFromEuler(Quaternion self,angles,order='zyx',inDegrees=True):
         """
