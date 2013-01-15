@@ -1,0 +1,113 @@
+********************************************************************************
+*                                                                              *
+*                   Natural Neighbour Interpolation                            *
+*                    - By Ross Hemsley Sept. '09 -                             *
+*                                                                              *
+********************************************************************************
+  About:
+********************************************************************************
+
+    The code provided here implements Natural Neighbour Interpolation in three
+    dimensions over a vector field. It has adaptive floating point arithmetic
+    to ensure results are robust. We also take care of avoiding degenerecies
+    by perturbing points which would cause problems.
+
+********************************************************************************
+  Testing:
+********************************************************************************
+  
+    All code has built in testing, simply setting the _TEST_ variable at the top
+    of each file will make it possible to compile that file and run build in 
+    tests.
+    
+    For example:
+    
+      > gcc -O3 natural.c delaunay.c utils.c -o natural_test
+      > ./natural_test
+
+    Will compile and run the unit tests for the Natural Neighbour Interpolator.
+    Similar commands will enable the testing of the Delaunay Triangulation 
+    routines, and the utility functions (stacks, lists etc.).
+
+********************************************************************************
+  Use:
+********************************************************************************  
+
+    See example.c for an example.
+
+    To use the interpolator, we need to set up an array of verticies with 
+    their associated vector values. We do this using the vertex structure.
+    Each vertex contains two arrays of double, and a cached value of the 
+    Voronoi Volume about that vertex, which is not elegent - but speeds up
+    interpolation by a factor of two.
+    
+    To load points into the program, we can use the function:
+    
+      vertex *initPoints(double *x, double *y, double *z, 
+                         double *u, double *v, double *w, int n)
+                       
+    Here is an example of building a simple point set:
+    
+      double x[] = {0,1,2};
+      double y[] = {3,4,5};
+      double z[] = {6,7,8};
+      
+      double u[] = {0,1,2};
+      double v[] = {3,4,5};
+      double w[] = {6,7,8};
+      
+      vertex* ps = initPoints(x,y,z,  u,v,w,  3);
+                       
+    which will take arrays containing the values of each point, and the 
+    vector value at each point, along with the number of points to return 
+    an array of verticies.
+      
+     
+    -----------------------------------------------------------------------       
+      Notes on using verticies directly.
+    -----------------------------------------------------------------------       
+    
+          struct 
+          {
+            double v[3];
+            double data[3];
+            double voronoiVolume;
+          } vertex;
+        
+        We initialise v to {x,y,z} and data to {u,v,w}. *We must also initialise
+        voronoiVolume to be < 0.*
+         
+        *** Failing to do this will probably result in nonsense output.***   
+         
+    -----------------------------------------------------------------------        
+    
+    To do interpolation, we first need to create a mesh. we can create the 
+    mesh struct, which holds all memory pool information and relevent 
+    simplex lists by running:
+    
+      mesh *example_mesh = newMesh();
+     
+    We can then load our points by doing the following:
+    
+      buildMesh(ps, n, example_mesh);
+        
+    where ps contains the loaded array of points, and n is the number of points.
+    to perform interpolation, we can now just do the following:
+       
+      interpolate3(x,y,z,  &u, &v, &w,  example_mesh);
+   
+    where u,v,w are doubles which will contain the interpolated point.
+        
+********************************************************************************  
+  Notes:        
+********************************************************************************  
+  
+    Errors may occur when trying to interpolate values which are outside
+    the convex hull of the input points. This is because we need the first
+    simplex, the super simplex, to contain all points which we wish to 
+    interpolate. If these errors occur, consider using a larger mesh (accuracy
+    will be poor when extrapolating). Or Extend the size of the super simplex
+    in the initSuperSimplex function in the Delaunay triangulation routine.
+    
+********************************************************************************  
+

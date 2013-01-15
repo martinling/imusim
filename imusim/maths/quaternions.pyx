@@ -136,6 +136,14 @@ def QuaternionFromEuler(angles,order='zyx',inDegrees=True):
     q.setFromEuler(angles,order,inDegrees)
     return q
 
+def QuaternionFromMatrix(m):
+    """
+    Create a quaternion to be eqivalent to a given 3x3 rotation matrix.
+    """
+    q = Quaternion()
+    q.setFromMatrix(m)
+    return q
+
 def QuaternionFromVectors(x,y,z):
     """
     Create a quaternion that acts as a rotation taking the e1,e2,e3 basis
@@ -143,6 +151,23 @@ def QuaternionFromVectors(x,y,z):
     """
     q = Quaternion()
     q.setFromVectors(x,y,z)
+    return q
+
+def QuaternionFromAxisAngle(axis,angle,inDegrees=True):
+    """
+    Construct a quaternion from the axis-angle representation of a rotation.
+    """
+    q = Quaternion()
+    q.setFromAxisAngle(axis,angle,inDegrees)
+    return q
+
+def QuaternionFromSORA(rx,ry,rz,inDegrees=True):
+    """
+    Construct a quaternion from simultaneous orthogonal rotations angle (SORA),
+    as commonly provided by a 3-axis gyroscope.
+    """
+    q = Quaternion()
+    q.setFromSORA(rx,ry,rz,inDegrees)
     return q
 
 def QuaternionNaN():
@@ -492,7 +517,7 @@ cdef class Quaternion:
         Set this quaternion so that it acts as a rotation taking the e1,e2,e3
         basis vectors to x,y,z.
         """
-        self.setFromMatrix(np.hstack((x,y,z)).T)
+        self.setFromMatrix(np.vstack((x,y,z)).reshape(3,3))
 
     def setFromEuler(Quaternion self,angles,order='zyx',inDegrees=True):
         """
@@ -508,10 +533,43 @@ cdef class Quaternion:
         self.set( reduce(operator.mul, [Quaternion(**dict((('w',cos(angle/2.0)),
             (axis.lower(),sin(angle/2.0))))) for angle, axis in zip(angles, order)]))
 
+    def setFromAxisAngle(Quaternion self,axis,angle,inDegrees=True):
+        """
+        Set this quaternion from the axis-angle representation of a rotation.
 
+        @param axis: axis: a unit vector indicating the direction of a directed axis.
+        @param angle: the magnitude of the rotation about the axis.
+        @param inDegrees: True to indicate that angles are in degrees (default),
+            or False for radians.
+        """
+        if inDegrees:
+            angle = np.radians(angle)
+        self.w = cos(angle/2)
+        self.x,self.y,self.z = axis * sin(angle/2)
+
+    def setFromSORA(Quaternion self,rx,ry,rz,inDegrees=True):
+        """
+        Set this quaternion from simultaneous orthogonal rotations angle (SORA)
+        as commonly provided by a 3-axis gyroscope.
+
+        @param rx: rotation about the x-axis.
+        @param ry: rotation about the y-axis.
+        @param rz: rotation about the z-axis.
+        @param inDegrees: True to indicate that angles are in degrees (default),
+            or False for radians.
+        """
+        angle = sqrt(rx**2 + ry**2 + rz**2)
+        if angle>0:
+            axis = np.vstack((rx,ry,rz))/angle
+            self.setFromAxisAngle(axis,angle,inDegrees)
+        else:
+            self.set(Quaternion())
 
     fromEuler = staticmethod(QuaternionFromEuler)
+    fromMatrix = staticmethod(QuaternionFromMatrix)
     fromVectors = staticmethod(QuaternionFromVectors)
+    fromAxisAngle = staticmethod(QuaternionFromAxisAngle)
+    fromSORA = staticmethod(QuaternionFromSORA)
     nan = staticmethod(QuaternionNaN)
 
     def __reduce__(Quaternion self):
