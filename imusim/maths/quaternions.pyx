@@ -145,6 +145,14 @@ def QuaternionFromVectors(x,y,z):
     q.setFromVectors(x,y,z)
     return q
 
+def QuaternionFromMatrix(m):
+    """
+    Create a quaternion from a rotation matrix.
+    """
+    q = Quaternion()
+    q.setFromMatrix(m)
+    return q
+
 def QuaternionNaN():
     return Quaternion(np.nan, np.nan, np.nan, np.nan)
 
@@ -511,6 +519,7 @@ cdef class Quaternion:
 
 
     fromEuler = staticmethod(QuaternionFromEuler)
+    fromMatrix = staticmethod(QuaternionFromMatrix)
     fromVectors = staticmethod(QuaternionFromVectors)
     nan = staticmethod(QuaternionNaN)
 
