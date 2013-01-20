@@ -282,7 +282,7 @@ cdef class Quaternion:
             data[2] = self._components.z
             return v
 
-    cpdef inline Quaternion log(Quaternion self):
+    def log(Quaternion self):
         """
         Natural logarithm of this quaternion.
         """
@@ -290,7 +290,7 @@ cdef class Quaternion:
         quaternion_log(&self._components, &result._components)
         return result
 
-    cpdef inline Quaternion exp(Quaternion self):
+    def exp(Quaternion self):
         """
         Exponential of this quaternion.
         """

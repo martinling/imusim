@@ -23,5 +23,3 @@ cdef inline void quaternion_exp(quaternion_t *q, quaternion_t *dest)
 
 cdef class Quaternion:
     cdef quaternion_t _components
-    cpdef inline Quaternion log(Quaternion self)
-    cpdef inline Quaternion exp(Quaternion self)
