@@ -1,0 +1,5 @@
+This code is from the interpolate3d package by Ross Hemsley.
+
+For a full copy of the package please see:
+
+http://code.google.com/p/interpolate3d/
