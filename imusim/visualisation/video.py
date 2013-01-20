@@ -20,7 +20,10 @@ Support for creating videos.
 
 import numpy as np
 from imusim.visualisation.rendering import AnimatedRenderer
-from enthought.mayavi import mlab
+try:
+    from mayavi import mlab
+except ImportError:
+    from enthought.mayavi import mlab
 import tempfile
 import os
 import subprocess

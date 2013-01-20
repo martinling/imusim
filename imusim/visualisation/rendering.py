@@ -21,10 +21,17 @@
 import time
 import wx
 import numpy as np
-from enthought.mayavi import mlab
+try:
+    from mayavi import mlab
+except ImportError:
+    from enthought.mayavi import mlab
 from abc import ABCMeta, abstractmethod
-from enthought.traits.api import HasTraits, Button, Range
-from enthought.traits.ui.api import View, Group, Item
+try:
+    from traits.api import HasTraits, Button, Range
+    from traitsui.api import View, Group, Item
+except ImportError:
+    from enthought.traits.api import HasTraits, Button, Range
+    from enthought.traits.ui.api import View, Group, Item
 import imusim.maths.vectors as vectors
 
 class InteractiveAnimation(HasTraits):
@@ -151,7 +158,7 @@ class BodyModelRenderer(AnimatedRenderer):
     """
     Renders a body model using lines connecting points.
 
-    Additional arguments are passed to the L{enthought.mayavi.mlab.plot3d}
+    Additional arguments are passed to the L{mayavi.mlab.plot3d}
     function to control the appearance of the rendered model.
 
     @param model: Root joint of the body model tree to render.
@@ -183,7 +190,7 @@ class VelocityVectorRenderer(AnimatedRenderer):
     """
     Renders the velocity vectors of a trajectory.
 
-    Additional arguments are passed to the L{enthought.mayavi.mlab.quiver3d}
+    Additional arguments are passed to the L{mayavi.mlab.quiver3d}
     function to control the appearance of the rendered model.
 
     @param trajectory: The trajectory to render the velocity of.
@@ -213,7 +220,7 @@ class ContactProbabilityRenderer(AnimatedRenderer):
 
     Intended to visualise results of the L{ContactTrackingKalmanFilter}.
 
-    Additional arguments are passed to the L{enthought.mayavi.mlab.points3d}
+    Additional arguments are passed to the L{mayavi.mlab.points3d}
     function to control the appearance of the rendered model.
 
     @param model: Body model to render contact probabilities for.
@@ -252,7 +259,7 @@ def renderSolenoidCoil(solenoid, segments=1000, **kwargs):
     @param segments: Number of coil segments to generate. Larger numbers
         result in smoother coils.
     @param kwargs: Additional keywords to pass to
-        L{enthought.mayavi.mlab.plot3d}.
+        L{mayavi.mlab.plot3d}.
     """
     coils = 2*solenoid.b * solenoid.n
 

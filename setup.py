@@ -41,11 +41,14 @@ except ImportError:
     print "See http://matplotlib.sf.net/"
 
 try:
-    import enthought.mayavi
+    import mayavi
 except ImportError:
-    depsOK = False
-    print "Mayavi should be installed first from suitable binaries."
-    print "See http://code.enthought.com/projects/mayavi/"
+    try:
+        import enthought.mayavi
+    except ImportError:
+        depsOK = False
+        print "Mayavi should be installed first from suitable binaries."
+        print "See http://code.enthought.com/projects/mayavi/"
 
 try:
     from setuptools import setup, find_packages
