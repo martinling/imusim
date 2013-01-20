@@ -180,7 +180,7 @@ def convertCGtoNED(param):
     @return:  The corresponding L{Quaternion} or vector in NED frame
     """
     if isinstance(param, (Quaternion,QuaternionArray)):
-        return _CGtoNED.conjugate * param
+        return _CGtoNED.conjugate * param * _CGtoNED
     else:
         return _CGtoNED.rotateFrame(param)
 
@@ -194,6 +194,6 @@ def convertNEDtoCG(param):
     @return:  The corresponding L{Quaternion} or vector in CG frame
     """
     if isinstance(param, (Quaternion,QuaternionArray)):
-        return _NEDtoCG.conjugate * param
+        return _NEDtoCG.conjugate * param * _NEDtoCG
     else:
         return _NEDtoCG.rotateFrame(param)
