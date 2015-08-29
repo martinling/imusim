@@ -118,8 +118,8 @@ class BVHLoader(object):
                     try:
                         p = np.array([[xPos,yPos,zPos]]).T * \
                                 self.conversionFactor
-                        p = convertCGtoNED(p)
                         del xPos, yPos, zPos
+                        p = convertCGtoNED(p)
                         joint.positionKeyFrames.add(time, p)
                     except UnboundLocalError:
                         raise SyntaxError("No position data for root joint")
@@ -127,12 +127,13 @@ class BVHLoader(object):
                 try:
                     if joint.hasChildren:
                         q = Quaternion.fromEuler((zRot,xRot,yRot), order='zxy')
-                        q = convertCGtoNED(q)
                         del xRot, yRot, zRot
                         # Rotation in BVH is relative to parent joint so
                         # combine the rotations
                         if joint.hasParent:
                             q = lastRotation[joint.parent] * q
+                        else:
+                            q = convertCGtoNED(q)
                         joint.rotationKeyFrames.add(time, q)
                         lastRotation[joint] = q
                 except UnboundLocalError:
@@ -169,7 +170,7 @@ does not match the number of channels. (Found %d of %d)" %(
                 y = self._floatToken()
                 z = self._floatToken()
                 currentJoint.positionOffset = \
-                        convertCGtoNED(np.array([[x,y,z]]).T*self.conversionFactor)
+                        np.array([[x,y,z]]).T*self.conversionFactor
             elif token == "CHANNELS":
                 n = self._intToken()
                 channels = []
@@ -273,7 +274,7 @@ def saveBVHFile(model, filename, samplePeriod, conversionFactor = 1):
         exporter = BVHExporter(model,bvhFile, samplePeriod, conversionFactor)
         exporter.writeHeader()
         for frame in xrange(exporter.frames):
-            exporter.writeFrame(model.startTime + frame * samplePeriod)
+            exporter.writeFrame(frame * samplePeriod)
 
 class BVHExporter(object):
     """
@@ -299,7 +300,7 @@ class BVHExporter(object):
         self.bvhFile = bvhFile
         self.model = model
         self.samplePeriod = samplePeriod
-        self.conversionFactor = conversionFactor
+        self.conversionFactor = 1
 
     @property
     def frames(self):
@@ -326,7 +327,7 @@ class BVHExporter(object):
             self.bvhFile.write("%s{\n" %(pad*d))
 
             self.bvhFile.write("%sOFFSET" %(pad*(d+1)))
-            for v in convertNEDtoCG(p.positionOffset):
+            for v in p.positionOffset:
                 self.bvhFile.write(" %.8f" % (v * self.conversionFactor))
             self.bvhFile.write("\n")
 
@@ -351,7 +352,7 @@ class BVHExporter(object):
             if hasattr(j,'channels') and len(j.channels) > 0:
 
                 if not j.hasParent:
-                    pos = j.position(t) * self.conversionFactor
+                    pos = j.position(t) * M_TO_CM_CONVERSION
                     pos = convertNEDtoCG(pos)
 
                 rot = j.rotation(t)
@@ -359,7 +360,8 @@ class BVHExporter(object):
                     # BVH rotations are relative to parent joint
                     # RigidBodyModel rotations are absolute
                     rot = j.parent.rotation(t).conjugate * rot
-                rot = convertNEDtoCG(rot)
+                else:
+                    rot = convertNEDtoCG(rot)
                 rot = rot.toEuler(order='zxy')
 
                 for chan in j.channels:
