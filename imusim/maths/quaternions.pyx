@@ -145,21 +145,6 @@ def QuaternionFromVectors(x,y,z):
     q.setFromVectors(x,y,z)
     return q
 
-def QuaternionFromMatrix(m):
-    """
-    Create a quaternion from a rotation matrix.
-    """
-    q = Quaternion()
-    q.setFromMatrix(m)
-    return q
-
-def QuaternionFromAxisAngle(axis, angle):
-    """
-    Create a quaternion from an axis and angle.
-    """
-    return Quaternion(np.cos(angle/2.),
-            *(axis.flatten() * np.sin(angle/2.)))
-
 def QuaternionNaN():
     return Quaternion(np.nan, np.nan, np.nan, np.nan)
 
@@ -297,7 +282,7 @@ cdef class Quaternion:
             data[2] = self._components.z
             return v
 
-    def log(Quaternion self):
+    cpdef inline Quaternion log(Quaternion self):
         """
         Natural logarithm of this quaternion.
         """
@@ -305,7 +290,7 @@ cdef class Quaternion:
         quaternion_log(&self._components, &result._components)
         return result
 
-    def exp(Quaternion self):
+    cpdef inline Quaternion exp(Quaternion self):
         """
         Exponential of this quaternion.
         """
@@ -526,9 +511,7 @@ cdef class Quaternion:
 
 
     fromEuler = staticmethod(QuaternionFromEuler)
-    fromMatrix = staticmethod(QuaternionFromMatrix)
     fromVectors = staticmethod(QuaternionFromVectors)
-    fromAxisAngle = staticmethod(QuaternionFromAxisAngle)
     nan = staticmethod(QuaternionNaN)
 
     def __reduce__(Quaternion self):
@@ -822,14 +805,6 @@ are supported for dot product'
         spl = PartialInputVectorSpline(ts, self.array.T, stddev=stddev)
         qa = QuaternionArray(spl(ts).T)
         return qa * (1.0/qa.magnitude)
-
-    def toAxisAngle(self):
-        """
-        Obtain the axis and angle of rotations specified by these quaternions.
-        """
-        angle = np.arccos(self.w)
-        axis = np.array((self.x,self.y,self.z))/np.sin(angle)
-        return axis,2*angle
 
     nan = staticmethod(QuaternionArrayNaN)
 

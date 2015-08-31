@@ -22,98 +22,79 @@ from __future__ import division
 import numpy as np
 import math
 import operator
-from itertools import izip
+
+_validEulerSequences = [
+        'xyz', 'xzy',
+        'yxz', 'yzx',
+        'zxy', 'zyx',
+        'xyx', 'xzx',
+        'yxy', 'yzy',
+        'zxz', 'zyz' ]
 
 _rotationMatrices = dict(
     x = lambda rx: np.matrix((
         (1,0,0),
         (0,math.cos(rx),-math.sin(rx)),
-        (0,math.sin(rx),math.cos(rx))),dtype=float),
+        (0,math.sin(rx),math.cos(rx)))),
     y = lambda ry: np.matrix((
         (math.cos(ry),0,math.sin(ry)),
         (0,1,0),
-        (-math.sin(ry),0,math.cos(ry))),dtype=float),
+        (-math.sin(ry),0,math.cos(ry)))),
     z = lambda rz: np.matrix((
         (math.cos(rz),-math.sin(rz),0),
         (math.sin(rz),math.cos(rz),0),
-        (0,0,1)),dtype=float))
-
-_EPS = 1e-12
-
-_eulerFuncs = dict(
-    xyz = lambda m: \
-            (np.arctan2(-m[1,2], m[2,2]), np.arcsin(m[0,2]), np.arctan2(-m[0,1], m[0,0])) if abs(m[0,2]) < 1 - _EPS \
-            else (np.arctan2(m[1,0], m[1,1]), np.pi/2, 0) if m[0,2] > 0 \
-            else (-np.arctan2(m[1,0], m[1,1]), -np.pi/2, 0),
-    xzy = lambda m: \
-            (np.arctan2(m[2,1], m[1,1]), np.arcsin(-m[0,1]), np.arctan2(m[0,2], m[0,0])) if abs(m[0,1]) < 1 - _EPS \
-            else (np.arctan2(-m[2,0], m[2,2]), -np.pi/2, 0) if m[0,1] > 0 \
-            else (-np.arctan2(-m[2,0], m[2,2]), np.pi/2, 0),
-    yxz = lambda m: \
-            (np.arctan2(m[0,2], m[2,2]), np.arcsin(-m[1,2]), np.arctan2(m[1,0], m[1,1])) if abs(m[1,2]) < 1 - _EPS \
-            else (np.arctan2(-m[0,1], m[0,0]), -np.pi/2, 0) if m[1,2] > 0 \
-            else (-np.arctan2(-m[0,1], m[0,0]), np.pi/2, 0),
-    yzx = lambda m: \
-            (np.arctan2(-m[2,0], m[0,0]), np.arcsin(m[1,0]), np.arctan2(-m[1,2], m[1,1])) if abs(m[1,0]) < 1 - _EPS \
-            else (np.arctan2(m[2,1], m[2,2]), np.pi/2, 0) if m[1,0] > 0 \
-            else (-np.arctan2(m[2,1], m[2,2]), -np.pi/2, 0),
-    zxy = lambda m: \
-            (np.arctan2(-m[0,1], m[1,1]), np.arcsin(m[2,1]), np.arctan2(-m[2,0], m[2,2])) if abs(m[2,1]) < 1 - _EPS \
-            else (np.arctan2(m[0,2], m[0,0]), np.pi/2, 0) if m[2,1] > 0 \
-            else (-np.arctan2(m[0,2], m[0,0]), -np.pi/2, 0),
-    zyx = lambda m: \
-            (np.arctan2(m[1,0], m[0,0]), np.arcsin(-m[2,0]), np.arctan2(m[2,1], m[2,2])) if abs(m[2,0]) < 1 - _EPS \
-            else (np.arctan2(-m[1,2], m[1,1]), -np.pi/2, 0) if m[2,0] > 0 \
-            else (-np.arctan2(-m[1,2], m[1,1]), np.pi/2, 0),
-    xyx = lambda m: \
-            (np.arctan2(m[1,0], -m[2,0]), np.arccos(m[0,0]), np.arctan2(m[0,1], m[0,2])) if abs(m[0,0]) < 1 - _EPS \
-            else (np.arctan2(-m[1,2], m[1,1]), 0, 0) if m[0,0] > 0 \
-            else (-np.arctan2(-m[1,2], m[1,1]), np.pi, 0),
-    xzx = lambda m: \
-            (np.arctan2(m[2,0], m[1,0]), np.arccos(m[0,0]), np.arctan2(m[0,2], -m[0,1])) if abs(m[0,0]) < 1 - _EPS \
-            else (np.arctan2(m[2,1], m[2,2]), 0, 0) if m[0,0] > 0 \
-            else (-np.arctan2(m[2,1], m[2,2]), np.pi, 0),
-    yxy = lambda m: \
-            (np.arctan2(m[0,1], m[2,1]), np.arccos(m[1,1]), np.arctan2(m[1,0], -m[1,2])) if abs(m[1,1]) < 1 - _EPS \
-            else (np.arctan2(m[0,2], m[0,0]), 0, 0) if m[1,1] > 0 \
-            else (-np.arctan2(m[0,2], m[0,0]), np.pi, 0),
-    yzy = lambda m: \
-            (np.arctan2(m[2,1], -m[0,1]), np.arccos(m[1,1]), np.arctan2(m[1,2], m[1,0])) if abs(m[1,1]) < 1 - _EPS \
-            else (np.arctan2(-m[2,0], m[2,2]), 0, 0) if m[1,1] > 0 \
-            else (-np.arctan2(-m[2,0], m[2,2]), np.pi, 0),
-    zxz = lambda m: \
-            (np.arctan2(m[0,2], -m[1,2]), np.arccos(m[2,2]), np.arctan2(m[2,0], m[2,1])) if abs(m[2,2]) < 1 - _EPS \
-            else (np.arctan2(-m[0,1], m[0,0]), 0, 0) if m[2,2] > 0 \
-            else (-np.arctan2(-m[0,1], m[0,0]), np.pi, 0),
-    zyz = lambda m: \
-            (np.arctan2(m[1,2], m[0,2]), np.arccos(m[2,2]), np.arctan2(m[2,1], -m[2,0])) if abs(m[2,2]) < 1 - _EPS \
-            else (np.arctan2(m[1,0], m[1,1]), 0, 0) if m[2,2] > 0 \
-            else (-np.arctan2(m[1,0], m[1,1]), np.pi, 0),
-    xy = lambda m: (np.arctan2(m[2,1], m[1,1]), np.arctan2(m[0,2], m[0,0])),
-    xz = lambda m: (np.arctan2(-m[1,2], m[2,2]), np.arctan2(-m[0,1], m[0,0])),
-    yx = lambda m: (np.arctan2(-m[2,0], m[0,0]), np.arctan2(-m[1,2], m[1,1])),
-    yz = lambda m: (np.arctan2(m[0,2], m[2,2]), np.arctan2(m[1,0], m[1,1])),
-    zx = lambda m: (np.arctan2(m[1,0], m[0,0]), np.arctan2(m[2,1], m[2,2])),
-    zy = lambda m: (np.arctan2(-m[0,1], m[1,1]), np.arctan2(-m[2,0], m[2,2])),
-    x = lambda m: (np.arctan2(m[2,1], m[2,2]),),
-    y = lambda m: (np.arctan2(m[0,2], m[0,0]),),
-    z = lambda m: (np.arctan2(m[1,0], m[1,1]),))
+        (0,0,1))))
 
 def matrixToEuler(m,order='zyx',inDegrees=True):
     """
     Convert a 3x3 rotation matrix to an Euler angle sequence.
 
     @param m: 3x3 L{np.matrix}, or equivalent, to convert.
-    @param order: The order of the Euler angle sequence, e.g. 'zyx'
+    @param order: The order of the Euler angle sequence, 'zyx' or 'zxy'.
     @param inDegrees: True to return result in degrees, False for radians.
 
     @return: L{np.ndarray} of Euler angles in specified order.
     """
-
+    EPS = 1e-6
     order = order.lower()
-    if order not in _eulerFuncs.keys():
-        raise NotImplementedError, "Order %s not implemented" % order
-    result = np.array(_eulerFuncs[order](m))
+    assert order in _validEulerSequences, "Invalid Euler sequence '%s'" % order
+
+    if order in 'zyx':
+        sp = -m[2,0]
+        if sp < (1-EPS):
+            if sp > (-1+EPS):
+                p = np.arcsin(sp)
+                r = np.arctan2(m[2,1],m[2,2])
+                y = np.arctan2(m[1,0],m[0,0])
+            else:
+                p = -np.pi/2.
+                r = 0
+                y = np.pi-np.arctan2(-m[0,1],m[0,2])
+        else:
+            p = np.pi/2.
+            y = np.arctan2(-m[0,1],m[0,2])
+            r = 0
+        result = np.array((y,p,r))
+
+    elif order in 'zxy':
+        sx = m[2,1]
+        if sx < (1-EPS):
+            if sx > (-1+EPS):
+                x = np.arcsin(sx)
+                z = np.arctan2(-m[0,1],m[1,1])
+                y = np.arctan2(-m[2,0],m[2,2])
+            else:
+                x = -np.pi/2
+                y = 0
+                z = -np.arctan2(m[0,2],m[0,0])
+        else:
+            x = np.pi/2
+            y = 0
+            z = np.arctan2(m[0,2],m[0,0])
+        result = np.array((z,x,y))
+
+    else:
+        raise NotImplementedError, "Unimplemented rotation order:%r"%order
 
     if inDegrees:
         return np.degrees(result)
@@ -136,8 +117,11 @@ def matrixFromEuler(angles, order, inDegrees=True):
     assert len(angles) == len(order)
 
     if inDegrees:
-        angles = np.radians(angles)
+        angles = (np.radians(angle) for angle in angles)
 
     return reduce(operator.mul,
-            (_rotationMatrices[axis](angle) for axis,angle in
-                izip(order.lower(), angles)))
+            (_rotationMatrices[axis.lower()](angle) for axis,angle in
+                zip(order, angles)))
+
+
+
