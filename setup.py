@@ -60,7 +60,7 @@ try:
             author = "Alex Young and Martin Ling",
             license = "GPLv3",
             url = "http://www.imusim.org/",
-            install_requires = ["simpy", "pyparsing"],
+            install_requires = ["simpy>=2.3,<3", "pyparsing"],
             packages = find_packages(),
             include_dirs = [numpy.get_include()],
             ext_modules = [
