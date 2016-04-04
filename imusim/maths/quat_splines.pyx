@@ -58,6 +58,10 @@ cdef class QuaternionBSpline:
         @param timestamps: Sequence of monotonically increasing keyframe times.
         @param quaternions: L{QuaternionArray} of keyframe quaternions.
         """
+
+        if len(timestamps) < 5:
+            raise Spline.InsufficientPointsError
+
         self.tmin = timestamps[0]
         self.dt = timestamps[1] - timestamps[0]
 
