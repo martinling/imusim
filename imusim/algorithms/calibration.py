@@ -83,7 +83,7 @@ class ScaleAndOffsetCalibration(SensorCalibration):
         p0 = np.array([1,1,1,0,0,0])
         p, ier = leastsq(error, p0, ftol=1e-3, maxfev=10000)
         if ier not in [1,2,3,4]:
-            raise ValueError, "Scale and offset fitting failed."
+            raise ValueError("Scale and offset fitting failed.")
         return ScaleAndOffsetCalibration(*params(p))
 
     def apply(self, measurement):

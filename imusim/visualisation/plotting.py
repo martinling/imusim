@@ -95,7 +95,7 @@ def plot(x, y=None, *args, **kwargs):
         if y.ndim == 2:
             y = y.T
 
-    if singleArg:
-        pylab.plot(y, *args, **kwargs)
-    else:
-        pylab.plot(x, y, *args, **kwargs)
+    # if singleArg:
+    #     pylab.plot(y, *args, **kwargs)
+    # else:
+    #     pylab.plot(x, y, *args, **kwargs)

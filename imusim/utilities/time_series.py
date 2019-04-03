@@ -22,7 +22,6 @@ import numpy as np
 from collections import namedtuple
 import numbers
 from copy import copy
-import itertools
 from imusim.maths.quaternions import Quaternion, QuaternionArray
 
 class TimeSeries(object):
@@ -52,7 +51,7 @@ class TimeSeries(object):
             data.
         """
         if (timestamps is None) != (values is None):
-            raise ValueError, "Both or neither of timestamps and values must be provided"
+            raise ValueError("Both or neither of timestamps and values must be provided")
         self._dtype = None
         self._timestampsArray = None
         self._valuesArray = None
@@ -169,11 +168,11 @@ class TimeSeries(object):
             return values
         else:
             if not self._hasVariances:
-                raise ValueError, "This time series has no variance data."
+                raise ValueError("This time series has no variance data.")
             return values, np.array(self._variances[indices])
 
     def __iter__(self):
-        return itertools.izip(self._timestamps, self._values, self._variances)
+        return zip(self._timestamps, self._values, self._variances)
 
     def add(self, time, value, variance=None):
         """

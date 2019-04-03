@@ -22,7 +22,6 @@ from __future__ import division
 import numpy as np
 from abc import ABCMeta, abstractmethod, abstractproperty
 from scipy.interpolate import splrep, splev
-from itertools import izip
 import math
 
 class Spline(object):
@@ -85,8 +84,7 @@ class UnivariateSpline(Spline):
             splineKwArgs['s']=0
 
         if len(x) <= order:
-            raise Spline.InsufficientPointsError, \
-                "%d points insufficient for order %d spline" % (len(x), order)
+            raise Spline.InsufficientPointsError("%d points insufficient for order %d spline" % (len(x), order))
 
         self._tck = splrep(x,y,**splineKwArgs)
 
@@ -157,8 +155,7 @@ class PartialInputSpline(Spline):
                 ends.remove(end)
 
         if len(self.splines) == 0:
-            raise Spline.InsufficientPointsError, \
-                "No valid regions long enough to create a spline"
+            raise Spline.InsufficientPointsError("No valid regions long enough to create a spline")
 
         xstarts = [s.validFrom for s in self.splines]
         xends = [s.validTo for s in self.splines]
@@ -192,7 +189,7 @@ class PartialInputSpline(Spline):
         """
         out = np.empty_like(np.atleast_1d(x))
 
-        for condition, result in izip(conditions, results):
+        for condition, result in zip(conditions, results):
             out[condition] = result
 
         out[undefined] = np.nan
@@ -212,7 +209,7 @@ class PartialInputSpline(Spline):
             conditions = []
         else:
             results, conditions = zip(*[(s(X[c], *args, **kwargs), c)
-                for c,s in izip(conditions, self.splines) if X[c].size > 0])
+                for c,s in zip(conditions, self.splines) if X[c].size > 0])
         return self._output(x, conditions, results, undefined)
 
     @property
