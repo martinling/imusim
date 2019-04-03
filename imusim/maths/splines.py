@@ -159,8 +159,8 @@ class PartialInputSpline(Spline):
 
         xstarts = [s.validFrom for s in self.splines]
         xends = [s.validTo for s in self.splines]
-        self.validRegions = zip(xstarts, xends)
-        self.regions = zip(xstarts, xends, self.splines)
+        self.validRegions = list(zip(xstarts, xends))
+        self.regions = list(zip(xstarts, xends, self.splines))
 
     def _validity(self, y):
         """
