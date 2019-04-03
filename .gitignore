@@ -1,5 +1,10 @@
 *.pyc
 *.so
 imusim/maths/*.c
+imusim/maths/*.html
 build
 docs/build
+.idea
+dist/
+imusim.egg-info/
+
