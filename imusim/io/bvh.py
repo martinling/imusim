@@ -150,7 +150,7 @@ class BVHLoader(object):
             raise SyntaxError("Syntax error at line %d: Number of entries \
 does not match the number of channels. (Found %d of %d)" %(
                 self.line,len(chanData),self.totalChannels))
-        return map(float,chanData)
+        return list(map(float,chanData))
 
     def _readJoint(self):
         # use jointStack[-1] to peek at the top of the jointStack
