@@ -18,7 +18,7 @@ Algorithms for tracking the position of a body model.
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import numpy as np
 import scipy.stats
 import math
@@ -27,15 +27,14 @@ from imusim.maths.kalman import KalmanFilter
 from imusim.utilities.time_series import TimeSeries
 from imusim.utilities.documentation import prepend_method_doc
 
-class PositionEstimator(object):
+
+class PositionEstimator(ABC):
     """
     Base class for position estimation algorithms.
 
     A position estimator takes data from IMUs on a jointed rigid body and
     updates the root position of a L{SampledBodyModel}.
     """
-    __metaclass__ = ABCMeta
-
     def __init__(self, model, initialTime=0, initialPosition=np.zeros((3,1))):
         """
         Initialise position estimator.
@@ -92,8 +91,9 @@ class PositionEstimator(object):
             parameter is not found in the passed data.
         """
         for item in data:
-            if item.has_key('jointName') and item['jointName'] == jointName:
+            if item.get('jointName') == jointName:
                 return item.get(parameter, default)
+
 
 class ConstantPosition(PositionEstimator):
     """
