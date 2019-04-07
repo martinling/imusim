@@ -7,4 +7,6 @@ docs/build
 .idea
 dist/
 imusim.egg-info/
+.DS_Store
+tests*.txt
 
