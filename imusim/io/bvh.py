@@ -271,7 +271,7 @@ def saveBVHFile(model, filename, samplePeriod, conversionFactor = 1):
     with open(filename,'w') as bvhFile:
         exporter = BVHExporter(model,bvhFile, samplePeriod, conversionFactor)
         exporter.writeHeader()
-        for frame in xrange(exporter.frames):
+        for frame in range(exporter.frames):
             exporter.writeFrame(model.startTime + frame * samplePeriod)
 
 class BVHExporter(object):
