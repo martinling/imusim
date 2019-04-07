@@ -18,19 +18,18 @@ Classes for modelling 3D vector fields.
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 from scipy import interpolate
 from imusim.maths import vectors
 from imusim.utilities.documentation import prepend_method_doc
 from imusim.maths.natural_neighbour import NaturalNeighbourInterpolatorC
 import numpy as np
 
-class VectorField(object):
+
+class VectorField(ABC):
     """
     Base class for vector fields.
     """
-    __metaclass__ = ABCMeta
-
     @abstractmethod
     def __call__(self, position, t):
         """
@@ -43,7 +42,8 @@ class VectorField(object):
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def nominalValue(self):
         """
         Nominal 3x1 vector value of the field, for use in calibrating sensors.
@@ -56,6 +56,7 @@ class VectorField(object):
         Nominal magnitude of the field, for use in calibrating sensors.
         """
         return vectors.norm(self.nominalValue)
+
 
 class ConstantVectorField(VectorField):
     """
@@ -79,6 +80,7 @@ class ConstantVectorField(VectorField):
     def nominalValue(self):
         return self._value
 
+
 class InterpolatedVectorField(VectorField):
     """
     A vector field interpolated from sampled values.
@@ -93,6 +95,7 @@ class InterpolatedVectorField(VectorField):
         @param values: 3xN L{np.ndarray} of corresponding field values.
         """
         pass
+
 
 class RBFInterpolatedField(InterpolatedVectorField):
     """
@@ -112,6 +115,7 @@ class RBFInterpolatedField(InterpolatedVectorField):
         outblocks = [np.array([np.atleast_1d(c(*(list(ib))))
             for c in self.components]) for ib in inblocks]
         return np.hstack(outblocks)
+
 
 class NaturalNeighbourInterpolatedField(InterpolatedVectorField):
     """

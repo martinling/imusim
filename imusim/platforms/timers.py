@@ -19,12 +19,13 @@ Models of hardware timers.
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 from imusim.platforms.base import Component
 from imusim.simulation.base import Simulation
 from imusim.utilities.documentation import prepend_method_doc
 import SimPy.Simulation
 import numpy as np
+
 
 class Timer(Component):
     """
@@ -32,9 +33,6 @@ class Timer(Component):
 
     @ivar callback: Function to be called when timer fires.
     """
-
-    __metaclass__ = ABCMeta
-
     def __init__(self, platform):
         self._process = None
         Component.__init__(self, platform)
@@ -102,6 +100,7 @@ class Timer(Component):
         """
         pass
 
+
 class IdealTimer(Timer):
     """
     An ideal timer with infinite resolution and no clock error.
@@ -112,6 +111,7 @@ class IdealTimer(Timer):
 
     def _measuredPeriod(self, _truePeriod):
         return _truePeriod
+
 
 class ParametricTimer(Timer):
     """

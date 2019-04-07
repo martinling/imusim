@@ -17,7 +17,7 @@ Behaviours for IMU devices.
 #
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
-from abc import ABCMeta
+from abc import ABC
 from imusim.utilities.time_series import TimeSeries
 from imusim.behaviours.timing import TimerMultiplexer, VirtualTimer
 from imusim.behaviours.sampling import PeriodicSampler
@@ -26,7 +26,8 @@ from imusim.platforms.sensors import Sensor
 from imusim.algorithms.orientation import OrientationFilter
 from imusim.platforms.imus import IMU
 
-class BasicIMUBehaviour(object):
+
+class BasicIMUBehaviour(ABC):
     """
     Basic behaviour for an IMU that performs periodic sampling.
 
@@ -39,9 +40,6 @@ class BasicIMUBehaviour(object):
         object will be passed as a single argument.
     @ivar timerMux: L{TimerMultiplexer} for IMU timer.
     """
-
-    __metaclass__ = ABCMeta
-
     def __init__(self, imu, samplingPeriod, calibration=None, filter=None,
             sampleCallback=None, initialTime=0):
         """

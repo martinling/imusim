@@ -20,32 +20,31 @@ Spline fitting.
 
 from __future__ import division
 import numpy as np
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 from scipy.interpolate import splrep, splev
 import math
 
-class Spline(object):
 
-    __metaclass__ = ABCMeta
-
+class Spline(ABC):
     """
     Base class for splines.
     """
-
     class InsufficientPointsError(ValueError):
         """
         Exception to be raised if insufficient points to form a valid spline.
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def validFrom(self):
         """
         The lowest x value at which the spline is defined.
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def validTo(self):
         """
         The highest x value atwhich the spline is defined.
@@ -59,11 +58,11 @@ class Spline(object):
         """
         pass
 
+
 class UnivariateSpline(Spline):
     """
     Model of a function of a single variable using spline fitting.
     """
-
     def __init__(self, x, y, order=3, stddev=0):
         """
         Construct spline.
@@ -108,6 +107,7 @@ class UnivariateSpline(Spline):
         Evaluate the n-th derivative of the function at input value(s) x.
         """
         return splev(x, self._tck, n)
+
 
 class PartialInputSpline(Spline):
     """

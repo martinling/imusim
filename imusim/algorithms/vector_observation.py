@@ -19,7 +19,7 @@ Algorithms for estimating orientation from reference vector observations.
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from imusim.maths.quaternions import Quaternion
 from scipy.optimize import newton
 import imusim.maths.vectors as vectors
@@ -27,7 +27,8 @@ from imusim.utilities.documentation import prepend_method_doc
 import numpy as np
 import math
 
-class VectorObservation(object):
+
+class VectorObservation(ABC):
     """
     Base class for all vector observation methods.
 
@@ -35,9 +36,6 @@ class VectorObservation(object):
     set of reference vectors to match the set of observed vectors.
     Vectors are assumed to be 3x1 L{np.ndarray}s
     """
-
-    __metaclass__ = ABCMeta
-
     def __call__(self, *measurements):
         """
         Estimate the orientation Quaternion from the observed vectors.
@@ -62,6 +60,7 @@ class VectorObservation(object):
         @return: The estimated orientation L{Quaternion}
         """
         pass
+
 
 class TRIAD(VectorObservation):
     """
@@ -91,6 +90,7 @@ class TRIAD(VectorObservation):
 
         return Quaternion.fromVectors(x, y, z)
 
+
 class GramSchmidt(VectorObservation):
     """
     Vector observation based on Gram-Schmidt Ortho-Normalisation.
@@ -108,6 +108,7 @@ class GramSchmidt(VectorObservation):
         y = vectors.cross(z, x)
 
         return Quaternion.fromVectors(x, y, z)
+
 
 class FQA(VectorObservation):
     """
@@ -208,6 +209,7 @@ class FQA(VectorObservation):
         else:
             return combined
 
+
 class LeastSquaresOptimalVectorObservation(VectorObservation):
     """
     Base class of least squares optimal vector observation algorithms
@@ -249,6 +251,7 @@ class LeastSquaresOptimalVectorObservation(VectorObservation):
         self.refs = np.asarray(refs)
         self.weights = np.asarray(weights) / sum(weights)
 
+
 class DavenportQ(LeastSquaresOptimalVectorObservation):
     """
     Implementation of the Davenport-q algorithm.
@@ -281,6 +284,7 @@ class DavenportQ(LeastSquaresOptimalVectorObservation):
         q = np.asarray(eigenVectors[:,np.argmax(eigenValues)])
 
         return Quaternion(q[3],q[0],q[1],q[2]).normalise()
+
 
 class QUEST(LeastSquaresOptimalVectorObservation):
     """
