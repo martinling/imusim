@@ -70,7 +70,7 @@ def testMatrixToEuler():
 def testUnkownRotationOrder():
     matrixToEuler(np.eye(3), order='zxz')
 
-@raises(AssertionError)
+@raises(NotImplementedError)
 def testInvalidRotationOrder():
     matrixToEuler(np.eye(3), order='invalid')
 
