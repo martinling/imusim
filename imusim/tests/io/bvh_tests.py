@@ -48,7 +48,7 @@ Frames: 1
 Frame Time: 0.1
 0.0 0.0 0.0 0.0 0.0 0.0 90.0 0.0 0.0
     """
-    testFile = tempfile.NamedTemporaryFile()
+    testFile = tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8')
     with testFile:
         testFile.write(data)
         testFile.flush()
@@ -104,8 +104,8 @@ Frame Time: 0.1
 0.0 3.0 0.0 0.0 0.0 0.0 60.0 0.0 15.0
 0.0 4.0 0.0 0.0 0.0 0.0 50.0 0.0 20.0
     """
-    testFile = tempfile.NamedTemporaryFile()
-    exportFile = tempfile.NamedTemporaryFile()
+    testFile = tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8')
+    exportFile = tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8')
     with testFile:
         testFile.write(data)
         testFile.flush()
@@ -123,7 +123,7 @@ Frame Time: 0.1
                         exported.rotation(0))
 
 def runSyntaxTest(data):
-    testFile = tempfile.NamedTemporaryFile()
+    testFile = tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8')
     with testFile:
         testFile.write(data)
         testFile.flush()
