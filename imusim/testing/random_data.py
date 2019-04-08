@@ -93,7 +93,7 @@ def randomValidity(t):
     valid = (rng.uniform(0,1) > 0.5)
     i = 0
     while i < len(t):
-        length = rng.uniform(1, 10)
+        length = int(rng.uniform(1, 10))
         validity[i:min(i+length,len(validity))] = valid
         valid = ~valid
         i += length

@@ -35,7 +35,7 @@ def assert_vectors_correlated(actual, desired, targetCorrelation=0.95):
     @param targetCorrelation: Minimum correlation to accept.
     """
     correlationMatrix = np.corrcoef(actual, desired)
-    s = correlationMatrix.shape[0] / 2
+    s = correlationMatrix.shape[0] // 2
     correlationMatrix = correlationMatrix[s:, :s]
     correlations = np.diag(correlationMatrix)
 
