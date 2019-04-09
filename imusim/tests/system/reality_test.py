@@ -66,12 +66,12 @@ def testAgainstReality():
     imuMarkerNames = \
             [[j + ' IMU - ' + str(i) for i in range(1,4)] for j in jointNames]
     jointMarkerSets = lambda c: [
-        map(c.marker, jointMarkerNames),
-        [map(c.marker, r) for r in refMarkerNames],
-        [map(c.marker, i) for i in imuMarkerNames]]
+        list(map(c.marker, jointMarkerNames)),
+        [list(map(c.marker, r)) for r in refMarkerNames],
+        [list(map(c.marker, i)) for i in imuMarkerNames]]
     imuMarkerSets = lambda c: [
         [c.marker(i[0]) for i in imuMarkerNames],
-        [map(c.marker,i[1:]) for i in imuMarkerNames]]
+        [list(map(c.marker,i[1:])) for i in imuMarkerNames]]
     jointRefTrajectories = [MultiMarkerTrajectory(j, r + i, refTime=refTime)
         for j, r, i in zip(*(jointMarkerSets(ref3D)))]
     jointTrajectories = [
@@ -126,7 +126,7 @@ def testAgainstReality():
     values = np.hstack(valueSets)
     valid = ~np.any(np.isnan(positions),axis=0) & ~np.any(np.isnan(values),axis=0)
     dev = values - np.median(values[:,valid],axis=1).reshape((3,1))
-    step = np.shape(values[:,valid])[1] / magSamples
+    step = np.shape(values[:,valid])[1] // magSamples
     posSamples = positions[:,valid][:,::step]
     valSamples = values[:,valid][:,::step]
     environment = Environment()
