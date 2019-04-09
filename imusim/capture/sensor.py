@@ -43,7 +43,7 @@ class SensorDataCapture(object):
         @param filename: Name of file to load from.
         @return: A L{SensorDataCapture} object.
         """
-        capture = pickle.loads(open(filename).read())
+        capture = pickle.load(open(filename, 'rb'))
         assert isinstance(capture, SensorDataCapture), \
                 "File did not contain a SensorDataCapture"
         return capture
