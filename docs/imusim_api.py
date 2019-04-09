@@ -3,6 +3,8 @@ from docutils import nodes
 import inspect
 import imusim
 import imusim.all
+import functools
+
 
 def imusim_api_role(role, rawtext, text, lineno, inliner, options={}, content=[]):
     """
@@ -12,7 +14,7 @@ def imusim_api_role(role, rawtext, text, lineno, inliner, options={}, content=[]
 
     try:
         # Look for object in imusim.all.
-        obj = reduce(lambda x,y: getattr(x,y), [imusim.all] + text.split('.'))
+        obj = functools.reduce(lambda x,y: getattr(x,y), [imusim.all] + text.split('.'))
 
         if inspect.ismodule(obj):
             file = '%s-module.html' % obj.__name__
@@ -34,18 +36,16 @@ def imusim_api_role(role, rawtext, text, lineno, inliner, options={}, content=[]
                 file = '%s.%s-class.html#%s' \
                     % (cls.__module__, cls.__name__, obj.__name__)
             else:
-                raise TypeError, \
-                        "Don't know how to document native object " + repr(obj)
+                raise TypeError("Don't know how to document native object " + repr(obj))
         else:
-            raise TypeError, \
-                    "Don't know how to document Python object " + repr(obj)
+            raise TypeError("Don't know how to document Python object " + repr(obj))
     except AttributeError:
         # Look for object as an imusim submodule.
         __import__("imusim.%s" % text)
-        obj = reduce(lambda x,y: getattr(x,y), [imusim] + text.split('.'))
+        obj = functools.reduce(lambda x,y: getattr(x,y), [imusim] + text.split('.'))
         file = 'imusim.%s-module.html' % text
     except ImportError:
-        raise KeyError, "Could not find an IMUSim object called '%s'" % text
+        raise KeyError("Could not find an IMUSim object called '%s'" % text)
 
     if inspect.ismethod(obj) \
             or (inspect.isbuiltin(obj) and hasattr(obj, '__objclass__')):
@@ -58,6 +58,7 @@ def imusim_api_role(role, rawtext, text, lineno, inliner, options={}, content=[]
     node = nodes.reference(rawtext, name, refuri=uri, **options)
 
     return [node], []
+
 
 def setup(app):
     app.add_role('api', imusim_api_role)

@@ -96,7 +96,7 @@ def assert_quaternions_correlated(actual, desired, targetCorrelation=0.95,
     actual = actual.array.T
     desired = desired.array.T
     correlationMatrix = np.corrcoef(actual, desired)
-    s = correlationMatrix.shape[0] / 2
+    s = correlationMatrix.shape[0] // 2
     correlationMatrix = correlationMatrix[s:, :s]
     correlations = np.diag(correlationMatrix)
 

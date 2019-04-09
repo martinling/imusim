@@ -17,19 +17,16 @@ Calibration algorithms for IMU sensors.
 #
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
-
-from __future__ import division
 from scipy.optimize import leastsq
-from abc import abstractmethod, ABCMeta
+from abc import abstractmethod, ABC
 import imusim.maths.vectors as vectors
 import numpy as np
 
-class SensorCalibration(object):
+
+class SensorCalibration(ABC):
     """
     Calibration data for a triaxial sensor.
     """
-    __metaclass__ = ABCMeta
-
     @abstractmethod
     def apply(measurement):
         """
@@ -39,6 +36,7 @@ class SensorCalibration(object):
         @return: Calibrated measurements (3x1 L{np.ndarray})
         """
         pass
+
 
 class ScaleAndOffsetCalibration(SensorCalibration):
     """
@@ -83,7 +81,7 @@ class ScaleAndOffsetCalibration(SensorCalibration):
         p0 = np.array([1,1,1,0,0,0])
         p, ier = leastsq(error, p0, ftol=1e-3, maxfev=10000)
         if ier not in [1,2,3,4]:
-            raise ValueError, "Scale and offset fitting failed."
+            raise ValueError("Scale and offset fitting failed.")
         return ScaleAndOffsetCalibration(*params(p))
 
     def apply(self, measurement):

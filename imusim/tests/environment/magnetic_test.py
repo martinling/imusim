@@ -50,7 +50,7 @@ def testUndistortedField():
         base = EarthMagneticField(*args)
         field = DistortedMagneticField(base)
         yield checkBaseField, field, nominal
-        for i in xrange(10):
+        for i in range(10):
             yield checkZeroHeadingVariation, field, random.uniform(size=(3,1),
                     low=-10, high=10)
 
@@ -62,7 +62,7 @@ def testDistortedField():
     field = DistortedMagneticField(EarthMagneticField())
     field.addDistortion(SolenoidMagneticField(200,20,0.05,0.2,
         AffineTransform()))
-    for i in xrange(10):
+    for i in range(10):
         yield checkNonZeroHeadingVariation, field, random.uniform(size=(3,1),
                 low=-1, high=1)
 

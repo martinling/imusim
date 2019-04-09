@@ -17,9 +17,7 @@ Base class for MAC algorithm implementations.
 #
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
-
-from __future__ import division
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from imusim.platforms.base import Platform
 from imusim.platforms.radios import Radio, RadioPacket
 from imusim.behaviours.timing import TimerMultiplexer
@@ -27,16 +25,14 @@ from imusim.maths.quaternions import Quaternion
 from imusim.utilities.documentation import prepend_method_doc
 import numpy as np
 
-class MAC(object):
+
+class MAC(ABC):
     """
     Base class for MAC implementations.
 
     @ivar radio: The L{Radio} used by the MAC.
     @ivar timerMux: L{TimerMultiplexer} used by the MAC.
     """
-
-    __metaclass__ = ABCMeta
-
     def __init__(self, radio, timerMux):
         """
         Initialise MAC.

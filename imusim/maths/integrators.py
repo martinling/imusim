@@ -19,15 +19,14 @@ Iterative integrator implementations.
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
 from imusim.utilities.documentation import prepend_method_doc
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from copy import copy
 
-class Integrator(object):
+
+class Integrator(ABC):
     """
     Base class for integrators.
     """
-    __metaclass__ = ABCMeta
-
     def __init__(self, initialValue):
         """
         Initialise integrator.
@@ -45,6 +44,7 @@ class Integrator(object):
         """
         pass
 
+
 class RectangleRule(Integrator):
     """
     Integration by the rectangle rule.
@@ -53,6 +53,7 @@ class RectangleRule(Integrator):
     def __call__(self, sampleValue, dt):
         self._accumulator += sampleValue * dt
         return copy(self._accumulator)
+
 
 class TrapeziumRule(Integrator):
     """
@@ -69,6 +70,7 @@ class TrapeziumRule(Integrator):
             self._accumulator += sampleValue * dt
         self._previousValue = sampleValue
         return copy(self._accumulator)
+
 
 class DoubleIntegrator(object):
     """

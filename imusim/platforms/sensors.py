@@ -18,7 +18,7 @@ Base classes for sensor models.
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 from imusim.platforms.base import Component
 from imusim.maths.transforms import AffineTransform
 from imusim.trajectories.offset import OffsetTrajectory
@@ -28,6 +28,7 @@ from imusim.maths.vectors import vector
 from imusim.maths.quaternions import Quaternion
 import numpy as np
 
+
 class Sensor(Component):
     """
     Base class for all IMU sensor classes.
@@ -35,9 +36,6 @@ class Sensor(Component):
     @ivar platform: L{Platform} this sensor is attached to.
     @ivar trajectory: L{OffsetTrajectory} followed by this sensor.
     """
-
-    __metaclass__ = ABCMeta
-
     def __init__(self, platform, positionOffset=vector(0,0,0),
             rotationOffset=Quaternion(1,0,0,0)):
         """
@@ -103,6 +101,7 @@ class Sensor(Component):
         """
         return self.sensedVoltages(t) + self.noiseVoltages(t)
 
+
 class IdealSensor(Sensor):
     """
     An ideal sensor with unity transfer function and no noise.
@@ -113,6 +112,7 @@ class IdealSensor(Sensor):
 
     def noiseVoltages(self, t):
         return vector(0,0,0)
+
 
 class NoisySensor(Sensor):
     """
@@ -137,6 +137,7 @@ class NoisySensor(Sensor):
     def noiseVoltages(self, t):
         return self._rng.normal(size=(3,1), scale=self._noiseStdDev)
 
+
 class TransformedSensor(Sensor):
     """
     An sensor with an affine transform transfer function.
@@ -154,6 +155,7 @@ class TransformedSensor(Sensor):
 
     def sensedVoltages(self, t):
         return self._transform.apply(self.trueValues(t))
+
 
 class NoisyTransformedSensor(NoisySensor, TransformedSensor):
     """

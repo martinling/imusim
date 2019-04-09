@@ -91,7 +91,7 @@ class HMC105x(NoisyTransformedSensor, Magnetometer):
 
         sensitivity = np.diag(sensitivity)
         cross_axis = np.eye(3)
-        for s in ((i,j) for i,j in np.ndindex(3, 3) if i<>j):
+        for s in ((i,j) for i,j in np.ndindex(3, 3) if i != j):
             cross_axis[s] = rng.normal(loc=0, scale=self.CROSS_AXIS/3)
         transform = np.dot(sensitivity,cross_axis)
 

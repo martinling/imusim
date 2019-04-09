@@ -65,7 +65,7 @@ def testBERRadioEnvironment():
     rx = TestPlatform(sim)
     packet = TestPacket()
 
-    for i in xrange(1000):
+    for _ in range(1000):
         tx.sendPacket(packet)
 
     assert len(tx.packetsReceived) == 0

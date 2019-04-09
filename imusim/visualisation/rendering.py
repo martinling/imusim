@@ -25,7 +25,7 @@ try:
     from mayavi import mlab
 except ImportError:
     from enthought.mayavi import mlab
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 try:
     from traits.api import HasTraits, Button, Range
     from traitsui.api import View, Group, Item
@@ -33,6 +33,7 @@ except ImportError:
     from enthought.traits.api import HasTraits, Button, Range
     from enthought.traits.ui.api import View, Group, Item
 import imusim.maths.vectors as vectors
+
 
 class InteractiveAnimation(HasTraits):
     """
@@ -115,12 +116,11 @@ def autoPositionCamera():
     mlab.roll(0)
     s.disable_render = False
 
-class AnimatedRenderer(object):
+
+class AnimatedRenderer(ABC):
     """
     Base class for animation renderers.
     """
-
-    __metaclass__ = ABCMeta
     def __init__(self, *args, **kwargs):
         """
         Initialise renderer.
@@ -154,6 +154,7 @@ class AnimatedRenderer(object):
             self._datasources = self.renderSnapshot(0)
         return self._datasources
 
+
 class BodyModelRenderer(AnimatedRenderer):
     """
     Renders a body model using lines connecting points.
@@ -186,6 +187,7 @@ class BodyModelRenderer(AnimatedRenderer):
             x,y,z = self._generateDataPoints(t, e)
             s.set(x=x, y=y, z=z)
 
+
 class VelocityVectorRenderer(AnimatedRenderer):
     """
     Renders the velocity vectors of a trajectory.
@@ -213,6 +215,7 @@ class VelocityVectorRenderer(AnimatedRenderer):
     def renderUpdate(self, t):
         x,y,z,u,v,w = self._generateDataVector(t)
         self.datasources.set(x=x, y=y, z=z, u=u, v=v, w=w)
+
 
 class ContactProbabilityRenderer(AnimatedRenderer):
     """
@@ -250,6 +253,7 @@ class ContactProbabilityRenderer(AnimatedRenderer):
         for s,j in zip(self.datasources, self._points):
             x,y,z,scalars = self._generateData(t, j)
             s.set(x=x, y=y, z=z, scalars=scalars)
+
 
 def renderSolenoidCoil(solenoid, segments=1000, **kwargs):
     """

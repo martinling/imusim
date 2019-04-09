@@ -147,10 +147,10 @@ class BVHLoader(object):
         '''
         chanData = self._readline().split()
         if len(chanData) != self.totalChannels:
-            raise SyntaxError, "Syntax error at line %d: Number of entries \
+            raise SyntaxError("Syntax error at line %d: Number of entries \
 does not match the number of channels. (Found %d of %d)" %(
-                self.line,len(chanData),self.totalChannels)
-        return map(float,chanData)
+                self.line,len(chanData),self.totalChannels))
+        return list(map(float,chanData))
 
     def _readJoint(self):
         # use jointStack[-1] to peek at the top of the jointStack
@@ -177,8 +177,8 @@ does not match the number of channels. (Found %d of %d)" %(
                     token = self._token()
                     if token not in ["Xposition","Yposition","Zposition",\
                                      "Xrotation","Yrotation","Zrotation"]:
-                        raise SyntaxError, "Syntax error in line %d: Invalid \
-channel name '%s'" %(self.line,token)
+                        raise SyntaxError("Syntax error in line %d: Invalid \
+channel name '%s'" %(self.line,token))
                     else:
                         channels.append(token)
                 self.totalChannels += n
@@ -195,9 +195,8 @@ channel name '%s'" %(self.line,token)
                 self.jointStack.pop()
                 break
             else:
-                raise SyntaxError,\
-                    "Syntax error in line %d: Unknown keyword '%s'" %(
-                            self.line,token)
+                raise SyntaxError("Syntax error in line %d: Unknown keyword '%s'" %(
+                            self.line,token))
 
     def _checkToken(self,expectedToken):
         '''
@@ -207,8 +206,8 @@ channel name '%s'" %(self.line,token)
         '''
         token = self._token()
         if token != expectedToken:
-            raise SyntaxError, "Syntax error in line %d: Expected %s \
-but found %s" %(self.line,expectedToken,token)
+            raise SyntaxError("Syntax error in line %d: Expected %s \
+but found %s" %(self.line,expectedToken,token))
 
     def _intToken(self):
        '''
@@ -218,8 +217,8 @@ but found %s" %(self.line,expectedToken,token)
        try:
            return int(token)
        except ValueError:
-           raise SyntaxError, 'Syntax error in line %d: Integer \
-expected but found %s' %(self.line,token)
+           raise SyntaxError('Syntax error in line %d: Integer \
+expected but found %s' %(self.line,token))
 
     def _floatToken(self):
         '''
@@ -229,8 +228,8 @@ expected but found %s' %(self.line,token)
         try:
             return float(token)
         except ValueError:
-            raise SyntaxError, 'Syntax error in line %d: Float \
-expected but found %s' %(self.line,token)
+            raise SyntaxError('Syntax error in line %d: Float \
+expected but found %s' %(self.line,token))
 
     def _token(self):
         '''
@@ -272,7 +271,7 @@ def saveBVHFile(model, filename, samplePeriod, conversionFactor = 1):
     with open(filename,'w') as bvhFile:
         exporter = BVHExporter(model,bvhFile, samplePeriod, conversionFactor)
         exporter.writeHeader()
-        for frame in xrange(exporter.frames):
+        for frame in range(exporter.frames):
             exporter.writeFrame(model.startTime + frame * samplePeriod)
 
 class BVHExporter(object):

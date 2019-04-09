@@ -117,7 +117,7 @@ def loadASFFile(asfFileName, amcFileName, scaleFactor, framePeriod):
                     offset = vector(0,0,0)
                     ancestors = bone.ascendTree()
                     while True:
-                        ancestor = ancestors.next().parent
+                        ancestor = next(ancestors).parent
                         offset += ancestor.childoffset
                         if not ancestor.isDummy:
                             break

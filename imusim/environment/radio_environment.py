@@ -19,17 +19,15 @@ Radio environment models.
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
-class RadioEnvironment(object):
+
+class RadioEnvironment(ABC):
     """
     Base class for radio environment models.
 
     @ivar receivers: list of potential receivers
     """
-
-    __metaclass__ = ABCMeta
-
     def __init__(self):
         """
         Construct radio environment model.
@@ -46,11 +44,11 @@ class RadioEnvironment(object):
         """
         pass
 
+
 class IdealRadioEnvironment(RadioEnvironment):
     """
     An ideal radio channel where all packet transmissions are successful.
     """
-
     def __init__(self):
         RadioEnvironment.__init__(self)
 
@@ -61,6 +59,7 @@ class IdealRadioEnvironment(RadioEnvironment):
             rxChannel = getattr(receiver, 'channel', None)
             if rxEnabled and txChannel == rxChannel and receiver is not transmitter:
                 receiver.handlePacket(packet)
+
 
 class BERRadioEnvironment(IdealRadioEnvironment):
     """

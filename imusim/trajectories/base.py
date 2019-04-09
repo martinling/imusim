@@ -18,31 +18,32 @@ Base classes for trajectories.
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 from imusim.maths.quaternions import Quaternion, QuaternionArray
 from scipy.linalg import expm
 import numpy as np
 
-class AbstractTrajectory(object):
+
+class AbstractTrajectory(ABC):
     """
     Base class of trajectories
     """
-
-    __metaclass__ = ABCMeta
-
-    @abstractproperty
+    @property
+    @abstractmethod
     def startTime(self):
         """
         The first time at which this trajectory is fully defined.
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def endTime(self):
         """
         The last time at which this trajectory is fully defined.
         """
         pass
+
 
 class PositionTrajectory(AbstractTrajectory):
     """Represents a continous trajectory of positions"""
@@ -76,6 +77,7 @@ class PositionTrajectory(AbstractTrajectory):
         @return: the acceleration vector at time t
         """
         pass
+
 
 class RotationTrajectory(AbstractTrajectory):
     """
@@ -112,11 +114,11 @@ class RotationTrajectory(AbstractTrajectory):
         """
         pass
 
+
 class ConstantPositionTrajectory(PositionTrajectory):
     """
     A trajectory with constant position.
     """
-
     def __init__(self, position=None):
         """
         Initialise the trajectory.
@@ -135,6 +137,7 @@ class ConstantPositionTrajectory(PositionTrajectory):
 
     def acceleration(self,t):
         return np.zeros((3, len(np.atleast_1d(t))))
+
 
 class ConstantRotationTrajectory(RotationTrajectory):
     """
@@ -163,11 +166,11 @@ class ConstantRotationTrajectory(RotationTrajectory):
     def rotationalAcceleration(self,t):
         return np.zeros((3, len(np.atleast_1d(t))))
 
+
 class StaticTrajectory(ConstantPositionTrajectory, ConstantRotationTrajectory):
     """
     Represents the trajectory of a static object.
     """
-
     def __init__(self, position=None, rotation=None):
         """
         Construct static trajectory.
@@ -186,11 +189,11 @@ class StaticTrajectory(ConstantPositionTrajectory, ConstantRotationTrajectory):
     def endTime(self):
         return np.inf
 
+
 class ContinuousRotationTrajectory(RotationTrajectory):
     """
     A trajectory with constant rotational velocity.
     """
-
     def __init__(self, rotationalVelocity, initialRotation=None):
         self.initialRotation = Quaternion() \
             if initialRotation is None else initialRotation
@@ -216,12 +219,12 @@ class ContinuousRotationTrajectory(RotationTrajectory):
     def rotationalAcceleration(self, t):
         return np.zeros((3, len(np.atleast_1d(t))))
 
+
 class StaticContinuousRotationTrajectory(ContinuousRotationTrajectory,
         ConstantPositionTrajectory):
     """
     A trajectory with constant position and rotational velocity.
     """
-
     def __init__(self, rotationalVelocity, initialRotation=None,
             position=None):
         ConstantPositionTrajectory.__init__(self, position)

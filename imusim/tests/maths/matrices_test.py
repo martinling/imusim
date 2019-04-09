@@ -67,10 +67,6 @@ def testMatrixToEuler():
         yield checkZYX, matrix, zyxAngles
 
 @raises(NotImplementedError)
-def testUnkownRotationOrder():
-    matrixToEuler(np.eye(3), order='zxz')
-
-@raises(AssertionError)
 def testInvalidRotationOrder():
     matrixToEuler(np.eye(3), order='invalid')
 

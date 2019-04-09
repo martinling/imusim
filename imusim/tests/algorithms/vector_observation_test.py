@@ -27,7 +27,7 @@ from imusim.maths.quaternions import Quaternion
 from imusim.testing.quaternions import assertQuaternionAlmostEqual
 from imusim.testing.inspection import getImplementations
 
-angles = [45*p for p in xrange(8)]
+angles = [45*p for p in range(8)]
 
 def checkVectorObservation(vectorObservationMethod, eulerAngles, inclination):
     if issubclass(vectorObservationMethod,

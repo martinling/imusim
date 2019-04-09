@@ -18,10 +18,11 @@ Radio models.
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 from imusim.platforms.base import Component
 
-class RadioPacket(dict):
+
+class RadioPacket(dict, ABC):
     """
     Class to represent a radio packet.
 
@@ -29,9 +30,6 @@ class RadioPacket(dict):
 
     Metadata relevant to radio simulation should be added as attributes.
     """
-
-    __metaclass__ = ABCMeta
-
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
         """
@@ -39,16 +37,16 @@ class RadioPacket(dict):
         """
         pass
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def bytes(self):
         pass
+
 
 class Radio(Component):
     """
     Base class for radios.
     """
-    __metaclass__ = ABCMeta
-
     def __init__(self, platform):
         Component.__init__(self, platform)
         self._receiveHandler = None
@@ -90,6 +88,7 @@ class Radio(Component):
     def _simulationChange(self):
         if self.platform.simulation is not None:
             self._env.receivers.add(self)
+
 
 class IdealRadio(Radio):
     """
