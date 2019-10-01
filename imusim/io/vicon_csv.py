@@ -5,6 +5,7 @@ Loader for Vicon optical capture data in CSV format.
 from __future__ import division
 from imusim.capture.marker import MarkerCapture, Marker3DOF
 import numpy as np
+import csv
 
 def loadViconCSVFile(filename):
     """
@@ -14,40 +15,48 @@ def loadViconCSVFile(filename):
 
     @return: A L{MarkerCapture} object.
     """
-    # Open file to read header.
-    datafile = open(filename, 'r')
 
-    # Function to get comma-separated values from a line.
-    values = lambda line: line.rstrip('\r\n').split(',')
-    # Read the word "Trajectories".
-    datafile.readline()
-    # Read the number of trajectories.
-    trajectories = datafile.readline()
-    # Get the unstripped marker names.
-    markers = values(datafile.readline())
-    # Strip the markers to only get every 3rd item starting from index 2.
-    markernames = [n.split(':')[-2] for n in markers[2::3]]
-    # Get the column names.
-    colnames = datafile.readline()
-    # Read the line containing the units of measurement (mm by default).
-    datafile.readline()
+    captureRate = 60.0
+    # Will change based on what Dan says
+    data = []
+    timestamps = []
+    jointNames = []
+    # A few empty lists
+    reader = csv.reader(filename)
+    # Read in the file
+    names = [str(name) for name in reader[2]]
+    # Set the third row of the file as the labels
+    row = next(reader)
+    # tmp = [str(element) for element in row[2:]]
+    # Read in data starting from 3rd row of row (6th row in csv)
 
-    # Get data.
-    data = np.array([[float(v or np.nan) for v in values(line)]
-        for line in datafile.readlines()]).T
+    for i, name in enumerate(names):
+        if i%3 == 2:
+            idx = name.rfind(':')
+            name = name[idx+1:]
+            jointNames.append(name)
+    # Create list of jointnames from label
 
-    frameTimes = data[1]
-    positions = data[2:].reshape((len(markernames),3,-1)) / 1000
+    for row in reader:
+        timestamps.append(float(row[0]))
+        # Set timestamp as first element of row
+        newData = [float(element) for element in row[2:]]
+        newData = np.split(np.array(newData), len(jointNames))
+        data.append(newData)
+
+    timestamps = np.array(timestamps)
+    data = np.array(data)/1000.0
+    # Data is in mm
 
     capture = MarkerCapture()
-    capture.frameTimes = frameTimes
-    capture.frameCount = len(frameTimes)
-    capture.framePeriod = np.min(np.diff(frameTimes))
-    capture.frameRate = 1 / capture.framePeriod
-
-    for i, name in enumerate(markernames):
+    capture.frameTimes = timestamps
+    capture.frameCount = len(timestamps)
+    capture.frameRate = captureRate
+    capture.framePeriod = 1.0/captureRate
+    
+    for i, name in enumerate(jointNames):
         marker = Marker3DOF(capture, name)
-        for time, position in zip(capture.frameTimes, positions[i].T):
+        for time, position in zip(capture.frameTimes, data[:,i,:]):
             marker.positionKeyFrames.add(time, position.reshape(3,1))
 
     return capture
