@@ -1,0 +1,13 @@
+numpy
+scipy
+matplotlib
+vtk
+python-vtk
+Qt.py
+pyqt5
+cython
+ipython
+ipywidgets
+ipyevents
+xvfbwrapper
+python-csv
