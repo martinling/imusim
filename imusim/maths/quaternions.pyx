@@ -509,9 +509,6 @@ cdef class Quaternion:
         """
         self.setFromMatrix(np.hstack((x,y,z)).T)
 
-    def __reduce__(Quaternion self):
-        return (Quaternion, (self.w, self.x, self.y, self.z))
-
     def setFromEuler(Quaternion self,angles,order='zyx',inDegrees=True):
         """
         Set this quaternion from an Euler angle sequence.
@@ -523,7 +520,7 @@ cdef class Quaternion:
         """
         if inDegrees:
             angles = [np.radians(angle) for angle in angles]
-        self.set(reduce(operator.mul, [Quaternion(**dict((('w',cos(angle/2.0)),
+        self.set( reduce(operator.mul, [Quaternion(**dict((('w',cos(angle/2.0)),
             (axis.lower(),sin(angle/2.0))))) for angle, axis in zip(angles, order)]))
 
 
@@ -533,6 +530,9 @@ cdef class Quaternion:
     fromVectors = staticmethod(QuaternionFromVectors)
     fromAxisAngle = staticmethod(QuaternionFromAxisAngle)
     nan = staticmethod(QuaternionNaN)
+
+    def __reduce__(Quaternion self):
+        return (Quaternion, (self.w, self.x, self.y, self.z))
 
 def QuaternionArrayNaN(length):
     a = np.empty((length,4))
