@@ -523,7 +523,7 @@ cdef class Quaternion:
         """
         if inDegrees:
             angles = [np.radians(angle) for angle in angles]
-        self.set( reduce(operator.mul, [Quaternion(**dict((('w',cos(angle/2.0)),
+        self.set(reduce(operator.mul, [Quaternion(**dict((('w',cos(angle/2.0)),
             (axis.lower(),sin(angle/2.0))))) for angle, axis in zip(angles, order)]))
 
 
