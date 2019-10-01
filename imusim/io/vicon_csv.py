@@ -19,12 +19,18 @@ def loadViconCSVFile(filename):
 
     # Function to get comma-separated values from a line.
     values = lambda line: line.rstrip('\r\n').split(',')
-
-    # Get column names.
-    colnames = values(datafile.readline())
-
-    # Get marker names.
-    markernames = [n.split(':')[-2] for n in colnames[2::3]]
+    # Read the word "Trajectories".
+    datafile.readline()
+    # Read the number of trajectories.
+    trajectories = datafile.readline()
+    # Get the unstripped marker names.
+    markers = values(datafile.readline())
+    # Strip the markers to only get every 3rd item starting from index 2.
+    markernames = [n.split(':')[-2] for n in markers[2::3]]
+    # Get the column names.
+    colnames = datafile.readline()
+    # Read the line containing the units of measurement (mm by default).
+    datafile.readline()
 
     # Get data.
     data = np.array([[float(v or np.nan) for v in values(line)]

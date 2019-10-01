@@ -19,10 +19,9 @@ Spline fitting of vector data.
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import division
-from splines import Spline, UnivariateSpline, PartialInputSpline
+from .splines import Spline, UnivariateSpline, PartialInputSpline
 import numpy as np
 from imusim.maths import vectors
-from itertools import izip
 
 class UnivariateVectorSpline(Spline):
     """
@@ -70,7 +69,7 @@ class PartialInputVectorSpline(PartialInputSpline):
 
     def _output(self, x, conditions, results, undefined):
         out = np.empty((self._dims, len(np.atleast_1d(x))))
-        for cond, result in izip(conditions, results):
+        for cond, result in zip(conditions, results):
             out[:,cond] = result
         out[:,undefined] = np.nan
         return out

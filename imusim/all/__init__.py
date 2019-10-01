@@ -23,8 +23,10 @@ import os
 import inspect
 
 __all__ = []
-path = os.path.split(pkgutil.get_loader('imusim').filename)[0]
+path = os.path.split(os.path.dirname(pkgutil.get_loader('imusim').path))[0]
 for loader, modname, ispkg in pkgutil.walk_packages([path]):
+    if modname in ['imusim.visualisation.rendering', 'imusim.visualisation.video']:
+        continue
     if modname.startswith('imusim') \
             and not modname.startswith('imusim.tests') \
             and not modname.startswith('imusim.all'):

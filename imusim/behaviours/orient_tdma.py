@@ -26,7 +26,7 @@ from imusim.maths.quaternions import Quaternion
 from imusim.utilities.documentation import prepend_method_doc
 import numpy as np
 
-class Schedule(object):
+class Schedule:
     """
     Transmission schedule.
     """
@@ -243,7 +243,7 @@ class InterSlaveMAC(SlaveMAC):
             self.auxSlot = 0
         else:
             self.auxSlot += 1
-        if self.slot < self.schedule.dataSlots:
+        if self.slot in self.schedule.dataSlots:
             self.auxSlotTimer.start(self.schedule.dataSlotTime/2)
             if self.auxSlot in self.auxTxSlots + self.auxRxSlots:
                 self.radio.channel = self.schedule.auxChannel

@@ -18,7 +18,7 @@ IMU hardware platform models.
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractproperty
+from abc import abstractmethod
 from imusim.platforms.base import Platform
 from imusim.platforms.sensors import Sensor
 from imusim.platforms.accelerometers import Accelerometer, \
@@ -33,19 +33,19 @@ from imusim.platforms.radios import Radio, IdealRadio
 from imusim.maths.vectors import vector
 from imusim.utilities.documentation import prepend_method_doc
 
+
 class IMU(Platform):
     """
     An IMU hardware platform with one or more sensors.
     """
-
-    __metaclass__ = ABCMeta
-
-    @abstractproperty
+    @property
+    @abstractmethod
     def sensors(self):
         """
         List of L{Sensor} objects on the platform.
         """
         pass
+
 
 class StandardIMU(IMU):
     """
@@ -70,6 +70,7 @@ class StandardIMU(IMU):
     def components(self):
         return self.sensors + [self.adc, self.timer, self.radio]
 
+
 class IdealIMU(StandardIMU):
     """
     An IMU with idealised models for all components.
@@ -84,6 +85,7 @@ class IdealIMU(StandardIMU):
         self.radio = IdealRadio(self)
         StandardIMU.__init__(self, simulation, trajectory)
 
+
 class MagicIMU(StandardIMU):
     """
     An IMU with idealised components including a fictional gravity sensor.
@@ -96,6 +98,7 @@ class MagicIMU(StandardIMU):
         self.timer = IdealTimer(self)
         self.radio = IdealRadio(self)
         StandardIMU.__init__(self, simulation, trajectory)
+
 
 class Orient3IMU(StandardIMU):
     """

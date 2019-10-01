@@ -78,9 +78,8 @@ class Simulation(object):
                 end = time.time()
 
                 remaining = (20-i) * (end-start)
-                print ("Simulated %.1fs of %.1fs (%3.0f%%). " +
-                        "Estimated time remaining %.1fs") \
-                        %(now, self.duration, (i + 1) * 5, remaining)
+                print ("Simulated %.1fs of %.1fs (%3.0f%%). Estimated time remaining %.1fs" % (
+                    now, self.duration, (i + 1) * 5, remaining))
 
     def run(self, endTime, printProgress=True):
         """
@@ -91,7 +90,7 @@ class Simulation(object):
         """
 
         if printProgress:
-            print "Simulating..."
+            print("Simulating...")
             startTime = self.time
             duration = endTime - startTime
             progressMonitor = self.ProgressMonitor(self.engine, duration)
@@ -101,9 +100,9 @@ class Simulation(object):
         endWallTime = time.time()
 
         if printProgress:
-            print "Simulation complete."
-            print "Simulated %.1f seconds in %.1f seconds." % (
-                    endTime - startTime, endWallTime - startWallTime)
+            print("Simulation complete.")
+            print("Simulated %.1f seconds in %.1f seconds." % (
+                    endTime - startTime, endWallTime - startWallTime))
 
     def subrng(self):
         """

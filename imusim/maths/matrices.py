@@ -22,7 +22,8 @@ from __future__ import division
 import numpy as np
 import math
 import operator
-from itertools import izip
+import functools
+
 
 _rotationMatrices = dict(
     x = lambda rx: np.matrix((
@@ -112,7 +113,7 @@ def matrixToEuler(m,order='zyx',inDegrees=True):
 
     order = order.lower()
     if order not in _eulerFuncs.keys():
-        raise NotImplementedError, "Order %s not implemented" % order
+        raise NotImplementedError("Order %s not implemented" % order)
     result = np.array(_eulerFuncs[order](m))
 
     if inDegrees:
@@ -138,6 +139,6 @@ def matrixFromEuler(angles, order, inDegrees=True):
     if inDegrees:
         angles = np.radians(angles)
 
-    return reduce(operator.mul,
+    return functools.reduce(operator.mul,
             (_rotationMatrices[axis](angle) for axis,angle in
-                izip(order.lower(), angles)))
+                zip(order.lower(), angles)))

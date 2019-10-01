@@ -18,21 +18,20 @@ Algorithms for reconstructing the posture of a body model.
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from imusim.trajectories.rigid_body import SampledBodyModel
 from imusim.maths.quaternions import Quaternion
 from imusim.platforms.radios import RadioPacket
 
-class PostureReconstructor(object):
+
+class PostureReconstructor(ABC):
     """
     Base class for posture reconstruction algorithms.
 
     A posture estimator takes data from IMUs on a jointed rigid body and
     updates the joint rotations of a L{SampledBodyModel}.
     """
-    __metaclass__ = ABCMeta
-
-    def __init__(self, bodyModel, initialJointRotations=[]):
+    def __init__(self, bodyModel, initialJointRotations=()):
         """
         Initialise posture reconstructor.
 
@@ -78,6 +77,7 @@ class PostureReconstructor(object):
         """
         pass
 
+
 class SimpleForwardKinematics(PostureReconstructor):
     """
     Posture reconstructor using joint orientations directly.
@@ -87,7 +87,7 @@ class SimpleForwardKinematics(PostureReconstructor):
         PostureReconstructor.__init__(self, bodyModel)
 
     def _update(self, joint, data, dt, t):
-        if data is not None and data.has_key('rotation'):
+        if data is not None and 'rotation' in data:
             joint.rotationKeyFrames.add(t, data['rotation'])
 
 
@@ -104,7 +104,7 @@ class InheritedForwardKinematics(PostureReconstructor):
         PostureReconstructor.__init__(self, bodyModel)
 
     def _update(self, joint, data, dt, t):
-        if data is not None and data.has_key('rotation'):
+        if data is not None and 'rotation' in data:
             joint.rotationKeyFrames.add(t, data['rotation'])
         elif joint.hasParent:
             joint.rotationKeyFrames.add(t, joint.parent.rotation(t))

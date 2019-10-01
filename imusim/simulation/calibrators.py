@@ -31,17 +31,16 @@ import imusim.maths.vectors as vectors
 from imusim.simulation.base import Simulation
 from imusim.behaviours.imu import BasicIMUBehaviour
 from imusim.utilities.documentation import prepend_method_doc
-from abc import abstractmethod, ABCMeta
+from abc import abstractmethod, ABC
 import numpy as np
 
-class Calibrator(object):
+
+class Calibrator(ABC):
     """
     A calibration procedure for IMUs.
 
     @ivar environment: The L{Environment} in which to calibrate.
     """
-    __metaclass__ = ABCMeta
-
     def __init__(self, environment):
         """
         Initialise calibrator.
@@ -60,6 +59,7 @@ class Calibrator(object):
 
         """
         pass
+
 
 class ScaleAndOffsetCalibrator(Calibrator):
     """

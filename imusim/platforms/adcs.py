@@ -18,7 +18,7 @@ Analogue to digital converter models.
 # You should have received a copy of the GNU General Public License
 # along with IMUSim.  If not, see <http://www.gnu.org/licenses/>.
 
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 from imusim.simulation.base import Simulation
 from imusim.platforms.base import Component
 from imusim.platforms.sensors import Sensor
@@ -30,9 +30,6 @@ class ADC(Component):
     """
     Base class for ADCs.
     """
-
-    __metaclass__ = ABCMeta
-
     @abstractmethod
     def transferFunction(self, voltageValues):
         """
