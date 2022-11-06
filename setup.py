@@ -23,22 +23,22 @@ try:
     import numpy
 except ImportError:
     depsOK = False
-    print "NumPy should be installed first from suitable binaries."
-    print "See http://numpy.scipy.org/"
+    print( "NumPy should be installed first from suitable binaries.")
+    print( "See http://numpy.scipy.org/")
 
 try:
     import scipy
 except ImportError:
     depsOK = False
-    print "SciPy should be installed first from suitable binaries."
-    print "See http://www.scipy.org/"
+    print( "SciPy should be installed first from suitable binaries.")
+    print( "See http://www.scipy.org/")
 
 try:
     import matplotlib
 except ImportError:
     depsOK = False
-    print "Matplotlib should be installed first from suitable binaries."
-    print "See http://matplotlib.sf.net/"
+    print( "Matplotlib should be installed first from suitable binaries.")
+    print( "See http://matplotlib.sf.net/")
 
 try:
     import mayavi
@@ -47,8 +47,8 @@ except ImportError:
         import enthought.mayavi
     except ImportError:
         depsOK = False
-        print "Mayavi should be installed first from suitable binaries."
-        print "See http://code.enthought.com/projects/mayavi/"
+        print( "Mayavi should be installed first from suitable binaries.")
+        print( "See http://code.enthought.com/projects/mayavi/")
 
 try:
     from setuptools import setup, find_packages
@@ -76,4 +76,4 @@ try:
                     'imusim/maths/natural_neighbour.c'])]
         )
 except ImportError:
-    print "Setuptools must be installed - see http://pypi.python.org/pypi/setuptools"
+    print( "Setuptools must be installed - see http://pypi.python.org/pypi/setuptools")
