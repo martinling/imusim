@@ -20,6 +20,7 @@ Quaternion maths.
 
 from __future__ import division
 import numpy as np
+import functools
 from scipy import interpolate
 from imusim.maths.vector_splines import PartialInputVectorSpline
 from imusim.maths import vectors, matrices
@@ -520,7 +521,7 @@ cdef class Quaternion:
         """
         if inDegrees:
             angles = [np.radians(angle) for angle in angles]
-        self.set( reduce(operator.mul, [Quaternion(**dict((('w',cos(angle/2.0)),
+        self.set(functools.reduce(operator.mul, [Quaternion(**dict((('w',cos(angle/2.0)),
             (axis.lower(),sin(angle/2.0))))) for angle, axis in zip(angles, order)]))
 
 
